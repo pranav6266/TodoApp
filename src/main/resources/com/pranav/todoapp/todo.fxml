@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.pranav.todoapp.Controllers.TodoController">
+    <VBox spacing="10" AnchorPane.leftAnchor="20"
+          AnchorPane.bottomAnchor="20"
+          AnchorPane.rightAnchor="20"
+          AnchorPane.topAnchor="20">
+        <HBox alignment="CENTER">
+            <Label text="TODO LIST" styleClass="title"/>
+        </HBox>
+        <HBox spacing="10">
+            <MFXButton text="Add Task" onAction="#handleAddTask" prefHeight="40"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <MFXComboBox fx:id="statusComboBox" promptText="All" prefHeight="40"/>
+        </HBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true"
+                    vbarPolicy="NEVER" hbarPolicy="NEVER">
+            <VBox fx:id="taskListVBox" spacing="10" prefHeight="400" />
+        </ScrollPane>
+    </VBox>
+
+</AnchorPane>
