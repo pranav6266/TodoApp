@@ -4,6 +4,8 @@ import com.pranav.todoapp.dto.TaskDTO;
 import com.pranav.todoapp.managers.TaskList;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +17,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TodoController {
 	@FXML
@@ -22,24 +26,53 @@ public class TodoController {
 	@FXML
 	public MFXComboBox<String> statusComboBox;
 	@FXML
-	public VBox taskListVBox;
-	private TaskList taskList;
+	private VBox taskListVBox;
+	private TaskList taskList = TaskList.getInstance();
 
 	@FXML
 	public void initialize(){
-		taskList = new TaskList();
+		taskList = TaskList.getInstance();
 		statusComboBox.getItems().addAll("All", "ToDo", "InProgress", "Done");
 		statusComboBox.setValue("All");
+		statusComboBox.valueProperty().addListener(
+				new ChangeListener<String>() {
+					@Override
+					public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+						//add filtering logic
+						filterTaskByStatus(newValue);
+					}
+				}
+		);
 
-		addTask("Create a JavaFX Project", "Build a really cool ui.",LocalDateTime.now().minusMinutes(3), "ToDo");
-		addTask("Learn SpringBoot","It is crucial for your career", LocalDateTime.now(), "Done");
-		addTask("Create a ToDo App","Building a ToDo List", LocalDateTime.now().minusMinutes(2), "InProgress");
+//		addTask("Create a JavaFX Project", "Build a really cool ui.",LocalDateTime.now().minusMinutes(3), "ToDo");
+//		addTask("Learn SpringBoot","It is crucial for your career", LocalDateTime.now(), "Done");
+//		addTask("Create a ToDo App","Building a ToDo List", LocalDateTime.now().minusMinutes(2), "InProgress");
+	redrawTaskList();
 	}
 
 	@FXML
 	public void handleAddTask(ActionEvent actionEvent) {
 		showAddTaskDialog();
 	}
+
+
+	private void filterTaskByStatus(String status){
+		taskListVBox.getChildren().clear();
+
+		List<TaskDTO> filteredTasks;
+
+		if ("All".equals(status)) {
+			filteredTasks = taskList.getTasks();
+		}else{
+			filteredTasks = taskList.getTasks().stream().filter(
+					task -> task.getStatus().equals(status)).collect(Collectors.toUnmodifiableList());
+		}
+
+		for(TaskDTO task : filteredTasks){
+			displayTask(task);
+		}
+	}
+
 
 	private void showAddTaskDialog(){
 		try {
@@ -77,7 +110,7 @@ public class TodoController {
 	                     LocalDateTime dateAdded, String status){
 		TaskDTO newTask = new TaskDTO(title, description, dateAdded, status);
 			taskList.addTask(newTask);
-			displayTask(newTask);
+			redrawTaskList();
 	}
 
 
@@ -87,12 +120,21 @@ public class TodoController {
 
 			HBox taskCard = loader.load();
 			TaskCardController controller = loader.getController();
-			controller.setTaskDetails(task.getTitle(), task.getDateAdded() , task.getStatus(), task.getId());
+			controller.setTaskDetails(task.getTitle(), task.getDateAdded() , task.getStatus(), task.getId(), this);
 
 			taskListVBox.getChildren().add(taskCard);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void redrawTaskList(){
+		taskListVBox.getChildren().clear();
+
+		for (TaskDTO task: taskList.getTasks()){
+			displayTask(task);
+		}
+
+		statusComboBox.setValue("All");
 	}
 }

@@ -2,39 +2,86 @@
 <?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.pranav.todoapp.Controllers.TaskViewDialogController"
-      spacing="20" alignment="CENTER" prefWidth="400" prefHeight="500" styleClass="view-dialog-pane">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pranav.todoapp.Controllers.TaskViewDialogController"
+      prefWidth="400"
+      prefHeight="500"
+      styleClass="view-dialog-pane"
+      spacing="15"
+      alignment="TOP_CENTER">
 
     <!-- Dialog Title -->
-    <Label text="View Task" styleClass="dialog-title" />
+    <Label text="View Task"
+           styleClass="dialog-title">
+        <VBox.margin>
+            <Insets top="5" right="5" bottom="15" left="5"/>
+        </VBox.margin>
+    </Label>
 
-    <!-- Task Title Input -->
-    <MFXTextField fx:id="taskTitleField" promptText="Task Title" floatingText="Title" prefWidth="400"/>
+    <!-- Task Title -->
+    <MFXTextField fx:id="taskTitleField"
+                  promptText="Task Title"
+                  floatingText="Title"
+                  prefWidth="380"/>
 
-    <!-- Task Description Input -->
-    <TextArea fx:id="taskDescriptionField" promptText="Task Description" wrapText="true" prefHeight="300" prefWidth="400"/>
+    <!-- Task Description -->
+    <TextArea fx:id="taskDescriptionField"
+              promptText="Task Description"
+              wrapText="true"
+              prefHeight="150"
+              prefWidth="380"
+              VBox.vgrow="ALWAYS"/>
 
-    <!-- Task Status Dropdown -->
-    <MFXComboBox fx:id="statusComboBox" promptText="Select Status" prefWidth="400" prefHeight="30"/>
+    <!-- Task Status -->
+    <MFXComboBox fx:id="statusComboBox"
+                 promptText="Select Status"
+                 prefWidth="380"/>
 
-    <!-- Comment Section -->
-    <Label text="Comments" />
-    <HBox spacing="10">
-        <MFXTextField fx:id="commentField" promptText="Add Comment" prefWidth="300"/>
-        <MFXButton text="Add" prefWidth="70" onAction="#handleAddComment" styleClass="add-comment-button"/>
+    <!-- Comments Section -->
+    <Label text="Comments"
+           styleClass="subtitle-label"/>
+
+    <!-- Add Comment Input -->
+    <HBox spacing="10"
+          prefWidth="380">
+        <MFXTextField fx:id="commentField"
+                      promptText="Add Comment"
+                      prefWidth="280"/>
+        <MFXButton text="Add"
+                   onAction="#handleAddComment"
+                   styleClass="add-comment-button"
+                   prefWidth="90"/>
     </HBox>
 
     <!-- Comment List -->
-    <ScrollPane fitToWidth="true" fitToHeight="true" vbarPolicy="NEVER" hbarPolicy="NEVER">
-        <VBox fx:id="commentList" spacing="5" prefHeight="300" prefWidth="400"/>
+    <ScrollPane fitToWidth="true"
+                hbarPolicy="NEVER"
+                prefHeight="200"
+                VBox.vgrow="ALWAYS">
+        <VBox fx:id="commentList"
+              spacing="5"
+              prefWidth="380"/>
     </ScrollPane>
 
-    <!-- Update, Cancel and Delete Buttons -->
-    <HBox spacing="20" alignment="CENTER_RIGHT">
-        <Region HBox.hgrow="ALWAYS" />
-        <MFXButton text="Cancel" onAction="#handleCancel" styleClass="cancel-button" prefWidth="80" prefHeight="30"/>
-        <MFXButton text="Delete" onAction="#handleDelete" styleClass="delete-button" prefWidth="80" prefHeight="30"/>
-        <MFXButton text="Update" onAction="#handleUpdate" styleClass="update-button" prefWidth="80" prefHeight="30"/>
+    <!-- Bottom Buttons -->
+    <HBox spacing="20"
+          alignment="CENTER_RIGHT"
+          prefHeight="40">
+        <Region HBox.hgrow="ALWAYS"/>
+        <MFXButton text="Cancel"
+                   onAction="#handleCancel"
+                   styleClass="cancel-button"
+                   prefWidth="80"/>
+        <MFXButton text="Delete"
+                   onAction="#handleDelete"
+                   styleClass="delete-button"
+                   prefWidth="80"/>
+        <MFXButton text="Update"
+                   onAction="#handleUpdate"
+                   styleClass="update-button"
+                   prefWidth="80"/>
     </HBox>
 </VBox>

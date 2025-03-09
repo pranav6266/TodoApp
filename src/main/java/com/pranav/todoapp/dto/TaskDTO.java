@@ -1,12 +1,17 @@
 package com.pranav.todoapp.dto;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
-public class TaskDTO {
+public class TaskDTO implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 
 	private String id;
 	private String title;

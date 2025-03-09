@@ -22,69 +22,19 @@ public class TaskCardController {
 	public Label taskTimeStamp;
 	public Label taskStatus;
 	public String taskId;
-	private final TaskList taskList = new TaskList();
+	private final TaskList taskList = TaskList.getInstance();
+	private TodoController mainController;
 
-
-
-
-	@FXML
-	public void handleViewTask(ActionEvent actionEvent) {
-		System.out.println("Viewing task: "+taskName.getText());
-		try {
-			// Use ClassLoader to get the resource URL
-			ClassLoader classLoader = TaskCardController.class.getClassLoader();
-			URL fxmlUrl = classLoader.getResource("com/pranav/todoapp/task_view_dialog.fxml");
-			
-			if (fxmlUrl == null) {
-				System.err.println("Error: Could not find task_view_dialog.fxml");
-				return;
-			}
-			
-			FXMLLoader loader = new FXMLLoader(fxmlUrl);
-			VBox dialogPane = loader.load();
-			
-			TaskDTO task = taskList.getTaskById(taskId);
-			if (task == null) {
-				System.err.println("Error: Could not find task with ID: " + taskId);
-				return;
-			}
-			
-			TaskViewDialogController dialogController = loader.getController();
-			dialogController.setTaskDetails(task, this);
-
-			Stage dialogStage = new Stage();
-			dialogStage.setTitle(taskName.getText());
-
-			dialogStage.initModality(Modality.APPLICATION_MODAL);
-			Scene scene = new Scene(dialogPane);
-
-			// Load CSS using ClassLoader as well
-			URL cssUrl = classLoader.getResource("com/pranav/todoapp/viewdialogstyles.css");
-			if (cssUrl == null) {
-				System.err.println("Error: Could not find viewdialogstyles.css");
-			} else {
-				scene.getStylesheets().add(cssUrl.toExternalForm());
-			}
-
-			dialogStage.setScene(scene);
-			dialogStage.showAndWait();
-
-		} catch (Exception e){
-			System.err.println("Error in handleViewTask: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-
-	public void setTaskDetails(String name, LocalDateTime timeStamp, String status, String id){
+	public void setTaskDetails(String name, LocalDateTime timeStamp, String status, String id, TodoController controller){
 		taskName.setText(name);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a, dd/MM/yyyy");
 		taskTimeStamp.setText(timeStamp.format(formatter));
 		taskStatus.setText(status);
 		this.taskId = id;
 		applyStatusColor(status);
-	}
 
+		mainController = controller;
+	}
 
 	private void applyStatusColor(String status){
 		switch (status){
@@ -95,8 +45,74 @@ public class TaskCardController {
 		}
 	}
 
+
+
+	@FXML
+	private void handleViewTask() {
+		System.out.println("🔄 Opening dialog for Task ID: " + taskId);
+		System.out.println("All stored tasks: " + taskList.getTasks());
+		// Print all tasks BEFORE fetching the requested task
+		System.out.println("🔥 Checking Available Tasks Before Fetch:");
+		for (TaskDTO task : taskList.getTasks()) {
+			System.out.println("  - " + task.getTitle() + " | ID: " + task.getId());
+		}
+
+		TaskDTO task = taskList.getTaskById(taskId);
+
+		if (task == null) {
+			System.out.println("❌ ERROR: setTaskDetails received a NULL task!");
+			return;
+		}
+
+		// Open dialog with the task details
+		showViewTaskDialog(task);
+	}
+
+	private void showViewTaskDialog(TaskDTO task) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pranav/todoapp/task_view_dialog.fxml"));
+			VBox dialogPane = loader.load();
+
+			TaskViewDialogController dialogController = loader.getController();
+			dialogController.setTaskDetails(task, this);
+
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle(taskName.getText());
+
+			// Set the dialog to be non-resizable
+			dialogStage.setResizable(false);
+
+			// Set the size of the dialog
+			dialogStage.setWidth(400); // Set your desired width
+			dialogStage.setHeight(550); // Set your desired height
+
+//			Making other objects or buttons unclickable
+			dialogStage.initModality(Modality.APPLICATION_MODAL);
+			Scene scene = new Scene(dialogPane);
+
+			String css = this.getClass().getResource("/com/pranav/todoapp/viewdialogstyles.css").toExternalForm();
+			scene.getStylesheets().add(css);
+
+			dialogStage.setScene(scene);
+			dialogStage.showAndWait();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public void updateTask(TaskDTO task){
 		taskList.updateTask(task);
 		taskName.setText(task.getTitle());
+		taskStatus.setText(task.getStatus());
+		applyStatusColor(task.getStatus());
+
+		mainController.redrawTaskList();
+	}
+
+	public void deleteTask(TaskDTO task){
+		taskList.removeTask(task);
+		mainController.redrawTaskList();
 	}
 }

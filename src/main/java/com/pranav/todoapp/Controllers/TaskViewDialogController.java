@@ -20,15 +20,20 @@ public class TaskViewDialogController {
 	public VBox commentList;
 	public MFXTextField commentField;
 
-	private TaskCardController mainController;
 	private TaskDTO task;
+	private TaskCardController mainController;
 
 	public void setTaskDetails(TaskDTO task, TaskCardController mainController){
 		this.task = task;
 		this.mainController = mainController;
 
-		taskTitleField.setText(task.getTitle());
-		taskDescriptionField.setText(task.getDescription());
+		if (task == null) {
+			System.out.println("ERROR: setTaskDetails received a NULL task!");
+			return;
+		}
+
+		taskTitleField.setText(this.task.getTitle());
+		taskDescriptionField.setText(this.task.getDescription());
 		statusComboBox.getItems().clear();
 		statusComboBox.getItems().addAll("ToDo", "InProgress", "Done" );
 
@@ -39,9 +44,7 @@ public class TaskViewDialogController {
 			statusComboBox.setValue(task.getStatus());
 		} );
 
-		task.getComments().forEach(comment -> {
-			displayComment(comment);
-		});
+		task.getComments().forEach(comment -> {displayComment(comment);});
 	}
 
 
@@ -67,6 +70,8 @@ public class TaskViewDialogController {
 
 	@FXML
 	public void handleDelete(ActionEvent actionEvent) {
+		mainController.deleteTask(task);
+		closeDialog();
 	}
 
 	@FXML
@@ -75,7 +80,8 @@ public class TaskViewDialogController {
 		task.setDescription(taskDescriptionField.getText());
 		task.setStatus(statusComboBox.getValue());
 
-//		mainController.
+		mainController.updateTask(task);
+		closeDialog();
 	}
 
 	void closeDialog(){
