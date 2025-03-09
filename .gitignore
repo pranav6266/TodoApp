@@ -3,6 +3,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.gradle/
+
+# Local Data
+/task.bin
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
