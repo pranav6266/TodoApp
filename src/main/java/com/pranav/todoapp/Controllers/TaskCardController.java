@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -83,8 +84,7 @@ public class TaskCardController {
 			dialogStage.setResizable(false);
 
 			// Set the size of the dialog
-			dialogStage.setWidth(400); // Set your desired width
-			dialogStage.setHeight(550); // Set your desired height
+			dialogStage.sizeToScene();
 
 //			Making other objects or buttons unclickable
 			dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -97,7 +97,11 @@ public class TaskCardController {
 			dialogStage.showAndWait();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Something went wrong!");
+			alert.setContentText(e.getMessage());
+			alert.showAndWait();
 		}
 	}
 

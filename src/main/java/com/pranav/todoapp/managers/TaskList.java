@@ -1,6 +1,7 @@
 package com.pranav.todoapp.managers;
 
 import com.pranav.todoapp.dto.TaskDTO;
+import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class TaskList implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private static final String FILE_PATH = "src/task.bin";
+	private static final String FILE_PATH = System.getProperty("user.home") + "/todoapp_task.bin";
 
 	private static final TaskList instance = new TaskList();
 	private static List<TaskDTO> tasks;
@@ -98,7 +99,11 @@ public class TaskList implements Serializable {
 		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))){
 			oos.writeObject(tasks);
 		}catch (IOException e){
-			e.printStackTrace();
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Something went wrong!");
+			alert.setContentText(e.getMessage());
+			alert.showAndWait();
 		}
 	}
 
