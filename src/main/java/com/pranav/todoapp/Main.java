@@ -42,10 +42,9 @@ public class Main extends Application {
 		scene.setFill(Color.TRANSPARENT);
 		stage.initStyle(StageStyle.DECORATED);
 		stage.setTitle("TODO App");
-		stage.setMinWidth(600);
-		stage.setMinHeight(400);
+		stage.setMinWidth(800);
+		stage.setMinHeight(500);
 		stage.setScene(scene);
-		stage.setMaximized(true);
 		stage.show();
 	}
 
